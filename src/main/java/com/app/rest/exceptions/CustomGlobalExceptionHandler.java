@@ -17,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
@@ -65,5 +66,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 				Arrays.asList(ex.getMessage()));
 
 		return new ResponseEntity<>(details, HttpStatus.METHOD_NOT_ALLOWED);
+	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest request){
+		
+		CustomErrorDetails details = new CustomErrorDetails(new Date(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
+		
+		return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
 	}
 }
