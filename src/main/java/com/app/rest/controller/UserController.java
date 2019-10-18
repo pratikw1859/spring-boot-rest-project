@@ -3,8 +3,12 @@ package com.app.rest.controller;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +27,7 @@ import com.app.rest.service.IUserService;
 
 @RestController
 @RequestMapping(UserController.API)
+@Validated
 public class UserController {
 	
 	public static final String API = "/api/v1";
@@ -39,7 +44,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users")
-	public ResponseEntity<?> save(@RequestBody User user){
+	public ResponseEntity<?> save(@Valid @RequestBody User user){
 		User savedInDb;
 		try {
 			savedInDb = userService.save(user);
@@ -53,7 +58,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/{id}")
-	public User getUserById(@PathVariable("id")Long id){
+	public User getUserById(@PathVariable("id") @Min(1)Long id){
 		
 		try {
 			return userService.getUserById(id).get();

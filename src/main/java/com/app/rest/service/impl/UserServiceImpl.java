@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.app.rest.exceptions.UserExistException;
 import com.app.rest.exceptions.UserNotFoundException;
+import com.app.rest.exceptions.UsernameNotFoundException;
 import com.app.rest.model.User;
 import com.app.rest.repository.UserRepository;
 import com.app.rest.service.IUserService;
@@ -73,6 +74,12 @@ public class UserServiceImpl implements IUserService{
 	
 	@Override
 	public Optional<User> findByUsername(String username) {
+		Optional<User> optionalUsername = userRepo.findByUsername(username);
+		
+		if(!optionalUsername.isPresent()) {
+			throw new UsernameNotFoundException("Username:"+username+" Not Found, Plz Provide Valid Username");
+		}
+		
 		return userRepo.findByUsername(username);
 	}
 }
