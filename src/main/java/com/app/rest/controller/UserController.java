@@ -30,7 +30,7 @@ import com.app.rest.service.IUserService;
 @Validated
 public class UserController {
 	
-	public static final String API = "/api/v1";
+	public static final String API = "/api/v1/users";
 	
 	private IUserService userService;
 
@@ -38,12 +38,12 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	@GetMapping("/users")
+	@GetMapping
 	public List<User> getAllUsers(){
 		return userService.getAllUsers();
 	}
 	
-	@PostMapping("/users")
+	@PostMapping
 	public ResponseEntity<?> save(@Valid @RequestBody User user){
 		User savedInDb;
 		try {
@@ -57,7 +57,7 @@ public class UserController {
 		return ResponseEntity.created(location).body(savedInDb);
 	}
 	
-	@GetMapping("/users/{id}")
+	@GetMapping("/{id}")
 	public User getUserById(@PathVariable("id") @Min(1)Long id){
 		
 		try {
@@ -68,7 +68,7 @@ public class UserController {
 		}
 	}
 	
-	@PutMapping("/users/{id}")
+	@PutMapping("/{id}")
 	public User updateUserById(@PathVariable("id") Long id , @RequestBody User user){
 		try {			
 			return userService.updateUserById(id, user);
@@ -78,13 +78,13 @@ public class UserController {
 		}
 	}
 	
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteUserById(@PathVariable("id")Long id){
 		userService.deleteUserById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/users/byUserName/{username}")
+	@GetMapping("/byUserName/{username}")
 	public User findByUsername(@PathVariable("username")String username){
 		return userService.findByUsername(username).get();
 	}
