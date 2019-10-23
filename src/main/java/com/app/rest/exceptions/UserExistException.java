@@ -1,6 +1,6 @@
 package com.app.rest.exceptions;
 
-public class UserExistException extends Exception {
+public class UserExistException extends RuntimeException {
 
 	private static final long serialVersionUID = -7380138428358945165L;
 

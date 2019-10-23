@@ -11,9 +11,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -22,11 +25,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+@EqualsAndHashCode(callSuper=false)
+public class User extends ResourceSupport{
 	
 	@Id
 	@GeneratedValue
-	private Long id;
+	@Column(name = "id")
+	private Long userId;
 	
 	@Column(name = "USERNAME" , length = 50 , nullable = false , unique = true)
 	@NotEmpty(message = "Username Is Mandatory Field, Plz Provide Username")

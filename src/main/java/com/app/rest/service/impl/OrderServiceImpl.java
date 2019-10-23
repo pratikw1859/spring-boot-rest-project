@@ -1,5 +1,6 @@
 package com.app.rest.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -25,5 +26,10 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public Optional<Order> getOrderByOrderId(Long id) {
 		return orderRepo.findById(id);
+	}
+	
+	@Override
+	public List<Order> saveAll(List<Order> orders) {
+		return orderRepo.saveAll(orders);
 	}
 }

@@ -10,8 +10,10 @@ import org.springframework.web.server.ResponseStatusException;
 import com.app.rest.exceptions.UserExistException;
 import com.app.rest.exceptions.UserNotFoundException;
 import com.app.rest.exceptions.UsernameNotFoundException;
+import com.app.rest.model.Order;
 import com.app.rest.model.User;
 import com.app.rest.repository.UserRepository;
+import com.app.rest.service.IOrderService;
 import com.app.rest.service.IUserService;
 
 @Service
@@ -19,27 +21,34 @@ public class UserServiceImpl implements IUserService{
 
 	private UserRepository userRepo;
 	
-	public UserServiceImpl(UserRepository userRepo) {
-		this.userRepo = userRepo;
-	}
+	private IOrderService orderService;
 	
+	public UserServiceImpl(UserRepository userRepo, IOrderService orderService) {
+		this.userRepo = userRepo;
+		this.orderService = orderService;
+	}
+
 	@Override
 	public List<User> getAllUsers() {
 		return userRepo.findAll();
 	}
 	
 	@Override
-	public User save(User user) throws UserExistException{
+	public User save(User user) {
 		Optional<User> optionalUsername = userRepo.findByUsername(user.getUsername());
 		
 		if(optionalUsername.isPresent()) {
 			throw new UserExistException("User With Username:"+user.getUsername()+" Already Exist"); 
 		}
-		return userRepo.save(user);
+		User savedInDb = userRepo.save(user);
+		user.getOrders().stream().forEach(order-> order.setUser(savedInDb));
+		List<Order> orders = orderService.saveAll(savedInDb.getOrders());
+		savedInDb.setOrders(orders);
+		return savedInDb;
 	}
 	
 	@Override
-	public Optional<User> getUserById(Long id) throws UserNotFoundException {
+	public Optional<User> getUserById(Long id) {
 		Optional<User> user = userRepo.findById(id);
 		
 		if(!user.isPresent()) {
@@ -49,14 +58,14 @@ public class UserServiceImpl implements IUserService{
 	}
 	
 	@Override
-	public User updateUserById(Long id, User user) throws UserNotFoundException{
+	public User updateUserById(Long id, User user) {
 		Optional<User> optionalUser = userRepo.findById(id);
 		
 		if(!optionalUser.isPresent()) {
 			throw new UserNotFoundException("User With Id:"+id+" Not Found, Provide The Valid Id"); 
 		}
 		
-		user.setId(id);
+		user.setUserId(id);
 		
 		return userRepo.save(user);
 	}

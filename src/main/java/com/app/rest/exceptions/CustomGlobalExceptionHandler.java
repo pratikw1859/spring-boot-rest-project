@@ -22,7 +22,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<CustomErrorDetails> handleUserNotFoundException(UserNotFoundException ex, WebRequest request){
+		CustomErrorDetails details = new CustomErrorDetails(new Date(), ex.getMessage(), Arrays.asList(request.getDescription(false),ex.getStackTrace().toString()));
+		
+		return new ResponseEntity<CustomErrorDetails>(details, HttpStatus.NOT_FOUND);
+	}
+	
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {

@@ -17,27 +17,27 @@ import com.app.rest.exceptions.OrderNotFoundException;
 import com.app.rest.exceptions.UserNotFoundException;
 import com.app.rest.model.Order;
 import com.app.rest.model.User;
-import com.app.rest.repository.OrderRepository;
-import com.app.rest.repository.UserRepository;
+import com.app.rest.service.IOrderService;
+import com.app.rest.service.IUserService;
 
 @RestController
 @RequestMapping(UserController.API)
 public class OrderController {
 
 	public static final String API = "/api/v1/users";
+	
+	private IUserService userService;
 
-	private UserRepository userRepo;
-
-	private OrderRepository orderRepo;
-
-	public OrderController(UserRepository userRepo, OrderRepository orderRepo) {
-		this.userRepo = userRepo;
-		this.orderRepo = orderRepo;
+	private IOrderService orderService;
+	
+	public OrderController(IUserService userService, IOrderService orderService) {
+		this.userService = userService;
+		this.orderService = orderService;
 	}
 
 	@GetMapping("/{userId}/orders")
 	public List<Order> getAllOrder(@PathVariable("userId") Long userId) throws UserNotFoundException {
-		Optional<User> optionalUser = userRepo.findById(userId);
+		Optional<User> optionalUser = userService.getUserById(userId);
 
 		if (!optionalUser.isPresent()) {
 			throw new UserNotFoundException("User With Id:" + userId + " Not Found, Provide The Valid Id");
@@ -48,14 +48,14 @@ public class OrderController {
 	@PostMapping("/{userId}/orders")
 	public ResponseEntity<Order> save(@PathVariable("userId") Long userId, @RequestBody Order order)
 			throws UserNotFoundException {
-		Optional<User> optionalUser = userRepo.findById(userId);
+		Optional<User> optionalUser = userService.getUserById(userId);
 		if (!optionalUser.isPresent()) {
 			throw new UserNotFoundException("User With Id:" + userId + " Not Found, Provide The Valid Id");
 		}
 
 		User user = optionalUser.get();
 		order.setUser(user);
-		Order savedInDb = orderRepo.save(order);
+		Order savedInDb = orderService.save(order);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{orderId}")
 				.buildAndExpand(savedInDb.getOrderId()).toUri();
 
@@ -65,7 +65,7 @@ public class OrderController {
 	@GetMapping("/{userId}/orders/{orderId}")
 	public Order getOrderByOrderId(@PathVariable("userId") Long userId, @PathVariable("orderId") Long orderId)
 			throws UserNotFoundException {
-		Optional<User> optionalUser = userRepo.findById(userId);
+		Optional<User> optionalUser = userService.getUserById(userId);
 
 		if (!optionalUser.isPresent()) {
 			throw new UserNotFoundException("User With Id:" + userId + " Not Found, Provide The Valid Id");
@@ -73,7 +73,7 @@ public class OrderController {
 
 		User user = optionalUser.get();
 
-		Optional<Order> optionalOrder = orderRepo.findById(orderId);
+		Optional<Order> optionalOrder = orderService.getOrderByOrderId(orderId);
 
 		if (!user.getOrders().contains(optionalOrder.get())) {
 			throw new OrderNotFoundException("Order Not Found With id:" + orderId + " For User Id:" + userId);
