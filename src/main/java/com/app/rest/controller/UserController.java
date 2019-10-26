@@ -48,7 +48,7 @@ public class UserController {
 		
 		return ResponseEntity.created(location).body(savedInDb);
 	}
-	
+
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable("id") @Min(1)Long id){
 		return userService.getUserById(id).get();
