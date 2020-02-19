@@ -8,3 +8,7 @@ insert into orders (order_id,order_description,user_id_fk) values(2003,'order13'
 insert into orders (order_id,order_description,user_id_fk) values(2004,'order21',102)
 insert into orders (order_id,order_description,user_id_fk) values(2005,'order22',102)
 insert into orders (order_id,order_description,user_id_fk) values(2006,'order31',103)
+
+insert into address (addr_id,city,state,country) values(4001,'Nagpur','Maharashtra','India')
+insert into address (addr_id,city,state,country) values(4002,'Hyderabad','Telengana','India')
+insert into address (addr_id,city,state,country) values(4003,'Pune','Maharashtra','India')
